@@ -1,4 +1,12 @@
 import PlaygroundSupport
 import SwiftUI
 
-PlaygroundPage.current.setLiveView(Menu())
+basedData()
+
+public func host() {
+    let host = UIHostingController(rootView: MenuView())
+    host.preferredContentSize = CGSize(width: 414  , height: 896)
+    PlaygroundPage.current.liveView = host
+}
+
+host()

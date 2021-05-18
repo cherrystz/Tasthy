@@ -1,32 +1,17 @@
-import PlaygroundSupport
+import CoreData
 import SwiftUI
 
-let Menus: [String:String] = ["pad-kraprao":"Pad Kra Prao","green-curry":"Green Curry","clear-soup":"Clear Soup","pad-thai":"Pad Thai","tom-yum":"Tom Yum Kung","":"Unknown"]
-
-struct RecipeView: View {
-    var body: some View {
-        Text("Hello World")
+public struct MenuView: View {
+    
+    public init() {
+        
     }
-}
-
-struct Fruit: Identifiable {
-    let id = UUID()
-    let name: String
-    let emoji: String
     
-    static var list = [
-        Fruit(name: "Apple", emoji: "🍎"),
-        Fruit(name: "Bannanna", emoji: "🍌"),
-        Fruit(name: "Cherry", emoji: "🍒"),
-        ]
-}
+    let Menu_Store: [Int:[String]] = fetchMenu()
     
-struct Menu: View {
-    
-    let MenuList: [String] = ["pad-kraprao","green-curry","clear-soup","pad-thai","tom-yum"]
-    
-    var body: some View {
+    public var body: some View {
         NavigationView {
+            
             VStack(alignment: .center, spacing: 25.0) {
                 
                 // Heading and sub of Apps
@@ -42,15 +27,35 @@ struct Menu: View {
                 // Horizontal Stack of view
                 ScrollView(.horizontal, showsIndicators: false, content: {
                     HStack(spacing: 10) {
-                        ForEach( Fruit.list ) { fruit in
-                                HStack {
-                                    Text("\(fruit.emoji)")
-                                    Text("\(fruit.name)")
-                                }
-                                .font(.title)
+                        
+                        ForEach(1...Menu_Store.count, id: \.self) { index in
+                            let data = Menu_Store[index]
+                            NavigationLink(destination: RecipeView(
+                                            CurrentMenu: fetchItem(id: index),
+                                            MenuName: (data?[0])!,
+                                            menu_id: index,
+                                            didTap: Array(repeatElement(false, count: fetchItem(id: index)[0].count))
+                                            
+                                )) {
+                                Image(name: (data?[1])! + ".jpg")
+                                    .resizable()
+                                    .cornerRadius(30)
+                                    .overlay(
+                                        Text((data?[0])!)
+                                            .foregroundColor((data?[1])! == "food-default" ? .black : .white)
+                                            .font(.system(size: 24.0))
+                                            .padding()
+                                        ,alignment: .bottomLeading
+                                    )
+                                    
+                            }
+                            
+                            .frame(width: 381, height: 346, alignment: .center)
+                            
                         }
                         
-                        NavigationLink(destination: RecipeView()) {
+                        NavigationLink(destination: Create()) {
+                            
                             VStack {
                                 Image(systemName: "plus.circle")
                                     .resizable()
@@ -63,11 +68,12 @@ struct Menu: View {
                                 
                         }
                         .frame(width: 381, height: 346, alignment: .center)
-                        
                     }
                 })
             }
+            .navigationBarHidden(true)
+            
+            
         }
     }
 }
-
